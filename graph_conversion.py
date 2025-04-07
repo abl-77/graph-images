@@ -19,7 +19,7 @@ def intensity(pixel):
 def get_neighbors(r, c, width, height):
     '''
     Method to get the neighbor indexes around a central node
-    Only count cardinal direction neighbors for now
+    Only count right and down neighbors to avoid repetition
     
     Params:
     r: Row of the central node
@@ -31,11 +31,11 @@ def get_neighbors(r, c, width, height):
     neighbors: List of neighbor nodes in the form (r, c)
     '''
     neighbors = []
-    for i in [-1, 0, 1]:
-        for j in [-1, 0, 1]:
+    for i in [0, 1]:
+        for j in [0, 1]:
             # Check to limit neighbors to cardinal directions
             if np.abs(i + j) == 1:
-                if r + i >= 0 and r + i < width and c + j >= 0 and c + j < height:
+                if r + i < width and c + j < height:
                     neighbors.append([r + i, c + j])
     
     return neighbors
@@ -57,20 +57,21 @@ def get_weight(img, r, c, n_r, n_c, sigma):
     '''
     return np.exp(np.abs(img[r, c] - img[n_r, n_c])**2 / sigma)
 
-def get_label(r, c):
+def get_label(r, c, width):
     '''
     Method to get a unique node label from pixel coordinates
     
     Params:
     r: Row of the pixel
     c: Column of the pixel
+    width: Width of the image
     
     Returns:
     label: Unique node label for graph representation
     '''
-    return (1 + r) * (1 + c)
+    return (r * width) + c
     
-def add_edges(graph, img, r, c):
+def add_edges(graph, img, r, c, width):
     '''
     Method to add weighted edges to an existing graph based on pixel similarity
     
@@ -79,11 +80,14 @@ def add_edges(graph, img, r, c):
     img: Intensity matrix of the image
     r: Row of the target node
     c: Column of the target node
+    width: Width of the image
     '''
     neighbors = get_neighbors(r, c, img.shape[0], img.shape[1])
-
+    
     for n_r, n_c in neighbors:
-        graph.add_edge(get_label(n_r, n_c), get_label(n_r, n_c), weight=get_weight(img, r, c, n_r, n_c, 1))
+        graph.add_edge(get_label(r, c, width), get_label(n_r, n_c, width), weight=get_weight(img, r, c, n_r, n_c, 1))
+        
+    print(f"Number of graph nodes: {len(graph.nodes)}")
 
 def convert_to_graph(path):
     '''
@@ -97,6 +101,9 @@ def convert_to_graph(path):
     '''
     # Load image to numpy array
     img = cv2.imread(path)
+    
+    # Reduce image definition
+    img = cv2.resize(img, (256, 256))
 
     # Create intensity image
     img_int = np.zeros(shape=(img.shape[0], img.shape[1]))
@@ -108,7 +115,7 @@ def convert_to_graph(path):
     img_graph = nx.Graph()
     for r in range(img_int.shape[0]):
         for c in range(img_int.shape[1]):
-            add_edges(img_graph, img_int, r, c)
+            add_edges(img_graph, img_int, r, c, img_int.shape[1])
             
     return img_graph
     
