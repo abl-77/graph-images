@@ -87,9 +87,7 @@ def add_edges(graph, img, r, c, width):
     for n_r, n_c in neighbors:
         graph.add_edge(get_label(r, c, width), get_label(n_r, n_c, width), weight=get_weight(img, r, c, n_r, n_c, 1))
         
-    print(f"Number of graph nodes: {len(graph.nodes)}")
-
-def convert_to_graph(path):
+def convert_to_graph(file):
     '''
     Method to convert a png image to weighted graph format
     
@@ -100,10 +98,13 @@ def convert_to_graph(path):
     graph: converted weighted graph of the image
     '''
     # Load image to numpy array
-    img = cv2.imread(path)
+    img = cv2.imread(f"data/real/{file}.png")
     
     # Reduce image definition
-    img = cv2.resize(img, (256, 256))
+    img = cv2.resize(img, (16, 16))
+    
+    # Save reduced definition image
+    cv2.imwrite(f"data/reduced/{file}.png", img)    
 
     # Create intensity image
     img_int = np.zeros(shape=(img.shape[0], img.shape[1]))
@@ -121,6 +122,6 @@ def convert_to_graph(path):
     
 if __name__=="__main__":
     file = "fake/10.S.B.M"
-    G = convert_to_graph(f"data/{file}.png")
-    with open(f"graph/{file}.pkl", "wb") as f:
+    G = convert_to_graph(file)
+    with open(f"data/graph/{file}.pkl", "wb") as f:
         pickle.dump(G, f)
