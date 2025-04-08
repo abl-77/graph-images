@@ -4,6 +4,7 @@ import pickle
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import cv2
+from graph_conversion import get_coordinates
 
 def cluster(A):
     '''
@@ -65,12 +66,28 @@ if __name__=="__main__":
         
     clusters = np.array(clusters, dtype=object)
     
+    '''
     img = mpimg.imread(f"data/real/{file}.png")
     plt.imshow(img)
     plt.axis("off")  
     plt.show()
+    '''
     
     img = mpimg.imread(f"data/reduced/{file}.png")
     plt.imshow(img)
     plt.axis("off")  
+    plt.show()
+    
+    img = cv2.imread(f"data/reduced/{file}.png")
+    
+    # Width needs to match what is specified in graph_conversion
+    width = 32
+    
+    for i in range(clusters.shape[0]):
+        r, c = get_coordinates(clusters[i], width)
+        for j in range(len(r)):
+            img[r[j], c[j]] = np.floor((i / clusters.shape[0] - 1) * np.array([255, 255, 255]))
+        
+    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    plt.axis("off")
     plt.show()

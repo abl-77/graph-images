@@ -50,7 +50,7 @@ def get_weight(img, r, c, n_r, n_c, sigma):
     c: Column of one pixel
     n_r: Row of the other pixel
     c_r: Column of the other pixel
-    sigma: Decreasing rate of the weights
+    sigma: How local the clusters should be (smaller more local)
     
     Returns:
     weight: Weight for a new edge between these two nodes
@@ -70,8 +70,22 @@ def get_label(r, c, width):
     label: Unique node label for graph representation
     '''
     return (r * width) + c
+
+def get_coordinates(label, width):
+    '''
+    Method to get the corresponding pixel coordinates from the node label
     
-def add_edges(graph, img, r, c, width):
+    Params:
+    label: Unique node label for graph representation
+    width: Width of the image
+    
+    Returns:
+    r: Row of the pixel
+    c: Column of the pixel
+    '''
+    return label // width, label % width
+    
+def add_edges(graph, img, r, c, width, sigma):
     '''
     Method to add weighted edges to an existing graph based on pixel similarity
     
@@ -81,11 +95,12 @@ def add_edges(graph, img, r, c, width):
     r: Row of the target node
     c: Column of the target node
     width: Width of the image
+    sigma: How local the clusters should be (smaller more local)
     '''
     neighbors = get_neighbors(r, c, img.shape[0], img.shape[1])
     
     for n_r, n_c in neighbors:
-        graph.add_edge(get_label(r, c, width), get_label(n_r, n_c, width), weight=get_weight(img, r, c, n_r, n_c, 1))
+        graph.add_edge(get_label(r, c, width), get_label(n_r, n_c, width), weight=get_weight(img, r, c, n_r, n_c, sigma))
         
 def convert_to_graph(file):
     '''
@@ -101,7 +116,8 @@ def convert_to_graph(file):
     img = cv2.imread(f"data/real/{file}.png")
     
     # Reduce image definition
-    img = cv2.resize(img, (16, 16))
+    dim = 32
+    img = cv2.resize(img, (dim, dim))
     
     # Save reduced definition image
     cv2.imwrite(f"data/reduced/{file}.png", img)    
@@ -116,7 +132,7 @@ def convert_to_graph(file):
     img_graph = nx.Graph()
     for r in range(img_int.shape[0]):
         for c in range(img_int.shape[1]):
-            add_edges(img_graph, img_int, r, c, img_int.shape[1])
+            add_edges(img_graph, img_int, r, c, img_int.shape[1], 0.35)
             
     return img_graph
     
