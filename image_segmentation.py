@@ -70,7 +70,7 @@ if __name__=="__main__":
     plt.axis("off")  
     plt.show()
     
-    img = mpimg.imread(f"data/real/{file}.png")
+    img = mpimg.imread(f"data/reduced/{file}.png")
     plt.imshow(img)
     plt.axis("off")  
     plt.show()
