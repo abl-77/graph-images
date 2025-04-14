@@ -4,7 +4,7 @@ import pickle
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import cv2
-from graph_conversion import get_coordinates
+from weight_graph_conversion import get_coordinates
 
 def cluster(A):
     '''
