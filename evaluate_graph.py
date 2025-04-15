@@ -29,10 +29,10 @@ def evaluate(G):
     avg_deg: Average degree of the graph
     diam: Graph diameter (inf if unconnected)
     '''
-    try:
-        diam = nx.diameter()
-    except:
-        diam = np.inf
+    if nx.is_connected(G):
+        diam = nx.diameter(G)
+    else:
+        diam = 1000
         
     return nx.transitivity(G), nx.number_connected_components(G), average_degree(G), diam
 
