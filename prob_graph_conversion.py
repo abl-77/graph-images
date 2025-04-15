@@ -98,7 +98,7 @@ def convert_folder(folder, dim):
             print(f"Convert {filename}")
             
             G = convert_to_graph(file_path, dim)
-            with open(f"Probabalistic_Graphs/{folder}_{dim}/{filename}.pkl", "wb") as f:
+            with open(f"Probabalistic Graphs/{folder} {dim}/{filename}.pkl", "wb") as f:
                 pickle.dump(G, f)
 
 if __name__=="__main__":
