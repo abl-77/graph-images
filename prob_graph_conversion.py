@@ -71,10 +71,7 @@ def convert_to_graph(file, dim):
     img = cv2.imread(file)
     
     # Reduce image definition
-    img = cv2.resize(img, (dim, dim))
-    
-    # Save reduced definition image
-    cv2.imwrite(f"data/reduced/{file}.png", img)    
+    img = cv2.resize(img, (dim, dim))  
 
     # Create intensity image
     img_int = np.zeros(shape=(img.shape[0], img.shape[1]))
@@ -106,5 +103,5 @@ def convert_folder(folder, dim):
 
 if __name__=="__main__":
     dim = 32
-    convert_folder("Real_faces", dim)
-    convert_folder("Synthetic_faces", dim)
+    convert_folder("Real faces", dim)
+    convert_folder("Synthetic faces", dim)
