@@ -27,12 +27,12 @@ def evaluate(G):
     trans: Graph transitivity
     num_con: Number of connected components
     avg_deg: Average degree of the graph
-    diam: Graph diameter (inf if unconnected)
+    diam: Graph diameter or largest subgraph diameter if unconnected
     '''
-    if nx.is_connected(G):
-        diam = nx.diameter(G)
-    else:
-        diam = 1000
+    largest_cc = max(nx.connected_components(G), key=len).copy()
+    sub_g = G.subgraph(largest_cc).copy()
+            
+    diam = nx.diameter(sub_g)
         
     return nx.transitivity(G), nx.number_connected_components(G), average_degree(G), diam
 
