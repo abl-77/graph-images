@@ -102,6 +102,6 @@ def convert_folder(folder, dim):
                 pickle.dump(G, f)
 
 if __name__=="__main__":
-    dim = 32
+    dim = 64
     convert_folder("Real faces", dim)
     convert_folder("Synthetic faces", dim)
