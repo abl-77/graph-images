@@ -1,6 +1,8 @@
 import networkx as nx
 import pickle
 import numpy as np
+import os
+import csv
 
 def average_degree(G):
     '''
@@ -22,23 +24,52 @@ def evaluate(G):
     G: Target graph
     
     Returns:
-    transitivity: Graph transitivity
-    num_connected: Number of connected components
+    trans: Graph transitivity
+    num_con: Number of connected components
     avg_deg: Average degree of the graph
-    diameter: Graph diameter (inf if unconnected)
+    diam: Graph diameter (inf if unconnected)
     '''
     try:
-        diameter = nx.diameter()
+        diam = nx.diameter()
     except:
-        diameter = np.inf
+        diam = np.inf
         
-    return nx.transitivity(G), nx.number_connected_components(G), average_degree(G), diameter
+    return nx.transitivity(G), nx.number_connected_components(G), average_degree(G), diam
+
+def evaluate_graphs(folder):
+    '''
+    Method to evaluate the graph metrics for all graphs in a given folder and write them to a data file
+    
+    Params:
+    folder: path to the image folder
+    '''
+    # Get the label from the file name
+    if "Real" in folder:
+        label = "real"
+    else:
+        label = "synthetic"
+        
+    data = []
+    
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        if os.path.isfile(file_path):
+            print(f"Evaluate {filename}")
+            
+            with open(file_path, "rb") as f:
+                G = pickle.load(f) 
+            
+            trans, num_con, avg_deg, diam = evaluate(G)
+            data.append([trans, num_con, avg_deg, diam, label])
+    
+    with open("data.csv", mode="a", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows(data)
 
 if __name__=="__main__":
-    file = "fake/10.S.B.M_32"
-
-    with open(f"prob/graph/{file}.pkl", "rb") as f:
-        G = pickle.load(f)
-        
-    print(evaluate(G))
+    with open("data.csv", mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows([["transitivity", "number of compontents", "average degree", "diameter", "label"]])
+    evaluate_graphs("Probabalistic Graphs/Real faces 32")
+    evaluate_graphs("Probabalistic Graphs/Synthetic faces 32")
         
