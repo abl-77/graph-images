@@ -2,7 +2,8 @@ import numpy as np
 import pickle
 import networkx as nx
 import cv2
-from weight_graph_conversion import intensity, get_label, get_coordinates
+from weight_graph_conversion import intensity, get_label
+import os
 
 # Standardize the random seed
 np.random.seed(1)
@@ -67,7 +68,7 @@ def convert_to_graph(file, dim):
     graph: converted weighted graph of the image
     '''
     # Load image to numpy array
-    img = cv2.imread(f"data/real/{file}.png")
+    img = cv2.imread(file)
     
     # Reduce image definition
     img = cv2.resize(img, (dim, dim))
@@ -86,9 +87,24 @@ def convert_to_graph(file, dim):
             
     return img_graph
 
+def convert_folder(folder, dim):
+    '''
+    Method to convert all images in a folder to graph representations
+    
+    Params:
+    folder: Path to the folder containing the images
+    dim: Dimension to reduce the images to
+    '''
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        if os.path.isfile(file_path):
+            print(f"Convert {filename}")
+            
+            G = convert_to_graph(file_path, dim)
+            with open(f"Probabalistic_Graphs/{folder}_{dim}/{filename}.pkl", "wb") as f:
+                pickle.dump(G, f)
+
 if __name__=="__main__":
-    file = "fake/10.S.B.M"
     dim = 32
-    G = convert_to_graph(file, dim)
-    with open(f"prob/graph/{file}_{dim}.pkl", "wb") as f:
-        pickle.dump(G, f)
+    convert_folder("Real_faces", dim)
+    convert_folder("Synthetic_faces", dim)
