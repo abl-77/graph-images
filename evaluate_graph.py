@@ -70,6 +70,6 @@ if __name__=="__main__":
     with open("data.csv", mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerows([["transitivity", "number of compontents", "average degree", "diameter", "label"]])
-    evaluate_graphs("Probabalistic Graphs/Real faces 32")
-    evaluate_graphs("Probabalistic Graphs/Synthetic faces 32")
+    evaluate_graphs("Probabalistic Graphs/Real faces 64")
+    evaluate_graphs("Probabalistic Graphs/Synthetic faces 64")
         
