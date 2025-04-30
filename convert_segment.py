@@ -44,13 +44,14 @@ def convert_to_graph(name, prob):
     
     return G
 
-def convert_folder(folder, prob):
+def convert_folder(folder, prob, num_graphs):
     '''
     Method to convert all images in a folder to graph representations
     
     Params:
     folder: Path to the folder containing the .npy mask files
     prob: Term for altering the overall frequency of edges
+    num_graphs: Number of graphs to generate for averages
     '''
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -59,11 +60,13 @@ def convert_folder(folder, prob):
         if os.path.isfile(file_path):
             base_name = filename[:-10]
             print(f"Convert {base_name}")
-            
-            G = convert_to_graph(base_name, prob)
-            with open(f"Probabalistic Graphs/{folder}/{filename}.pkl", "wb") as f:
-                pkl.dump(G, f)
+
+            # Create multiple graphs to average the graph metrics
+            for i in range(num_graphs):
+                G = convert_to_graph(base_name, prob)
+                with open(f"Probabalistic Graphs/{folder}/{filename}_{i}.pkl", "wb") as f:
+                    pkl.dump(G, f)
 
 if __name__=="__main__":
-    convert_folder("synthetic", 0.5)
+    convert_folder("synthetic", 0.5, 5)
     # convert_folder("real")
