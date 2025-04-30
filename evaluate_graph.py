@@ -44,10 +44,10 @@ def evaluate_graphs(folder):
     folder: path to the image folder
     '''
     # Get the label from the file name
-    if "Real" in folder:
-        label = "real"
-    else:
+    if "synthetic" in folder:
         label = "synthetic"
+    else:
+        label = "real"
         
     data = []
     
