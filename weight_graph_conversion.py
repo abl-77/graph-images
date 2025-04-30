@@ -113,14 +113,14 @@ def convert_to_graph(file):
     graph: converted weighted graph of the image
     '''
     # Load image to numpy array
-    img = cv2.imread(f"data/real/{file}.png")
+    img = cv2.imread(file)
     
     # Reduce image definition
     dim = 32
     img = cv2.resize(img, (dim, dim))
     
     # Save reduced definition image
-    cv2.imwrite(f"data/reduced/{file}.png", img)    
+    # cv2.imwrite(f"data/reduced/{file}.png", img)    
 
     # Create intensity image
     img_int = np.zeros(shape=(img.shape[0], img.shape[1]))
